@@ -1,0 +1,61 @@
+﻿@model IEnumerable<SuperVoyageInfini.Database.Models.ApplicationUser>
+
+@{
+    ViewBag.Title = "Admin";
+}
+
+<h1>Administration</h1>
+
+<div class="col-md-6">
+    <h2>@AppResource.AdminRights</h2>
+    @foreach(var user in Model)
+    {
+        //Passer dans la liste de tous les user créés pour les afficher
+            <div class="col-md-8">
+                <div class="thumbnail">
+                    @Html.DisplayFor(modelItem => user.Email)
+                    
+                </div>       
+            </div>
+            <div class="col-md-4">
+                <!--Si le user est un admin ou non, le bouton change-->
+                @if (ViewBag.UserAdmins.Contains(user))
+                {
+                    using (Html.BeginForm("RemoveAdmin", "Voyages", new { Id = user.Id }, FormMethod.Post))
+                    {
+                        <button class="btn btn-danger">@AppResource.RemoveAdmin</button>
+                    }
+                }
+                else
+                {
+                    using (Html.BeginForm("AddAdmin", "Voyages", new { Id = user.Id }, FormMethod.Post))
+                    {
+                        <button class="btn btn-primary">@AppResource.AddAdmin</button>
+                    }
+                }
+
+            </div>
+    }
+</div>
+
+<div class="col-md-6">
+    <h2>@SuperVoyageInfini.Resources.AppResource.ApprouveTrips</h2>
+    @foreach(var voyageName in ViewBag.VoyagesPending)
+    {
+        <div class="row">
+            <div class="thumbnail col-md-12">
+                <div class="col-md-6">
+                    @Html.DisplayFor(modelItem => voyageName)
+                </div>
+                @using (Html.BeginForm("Approuve", "Voyages", new { voyageName = voyageName }, FormMethod.Post))
+                {
+            <div class="col-md-6">
+                <button style="float:right;" class="btn btn-primary">@SuperVoyageInfini.Resources.AppResource.AcceptPublication</button>
+            </div>
+            
+                }
+            </div>
+        </div> 
+    }
+</div>
+
