@@ -9,20 +9,41 @@ using System.Web.Mvc;
 
 namespace SuperVoyageInfini.Web.Controllers
 {
+    [RequireHttps]
     public class VoyagesController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+
         public ActionResult Index()
         {
             //Si un User est connecté, récuper le user dans un ViewBag
-            if (User.Identity.IsAuthenticated)
+            
+
+            foreach (Voyage v in db.Voyages.ToList())
             {
-                UserStore<ApplicationUser> userStore = new UserStore<ApplicationUser>(db);
-                UserManager<ApplicationUser> userManager = new UserManager<ApplicationUser>(userStore);
-                ApplicationUser activeUser = userManager.FindByName(User.Identity.Name);
-                ViewBag.ActiveUser = activeUser;
+                if (v.IsPublic)
+                {
+                    v.Color = "green";
+                }
+                else if (User.Identity.IsAuthenticated)
+                {
+                    UserStore<ApplicationUser> userStore = new UserStore<ApplicationUser>(db);
+                    UserManager<ApplicationUser> userManager = new UserManager<ApplicationUser>(userStore);
+                    ApplicationUser activeUser = userManager.FindByName(User.Identity.Name);
+                    ViewBag.ActiveUser = activeUser;
+
+                    if (v.Participants.Contains(activeUser))
+                    {
+                        v.Color = "red";
+                    }
+                    else if(v.User == activeUser)
+                    {
+                        v.Color = "deepskyblue";
+                    }
+                }
             }
+
 
             return View(db.Voyages.ToList());
         }
@@ -54,7 +75,7 @@ namespace SuperVoyageInfini.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Description")] Voyage voyage)
+        public ActionResult Create([Bind(Include = "Id,Name,Description,Image")] Voyage voyage)
         {
             if (ModelState.IsValid)
             {

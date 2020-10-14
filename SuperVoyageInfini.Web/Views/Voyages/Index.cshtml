@@ -15,13 +15,13 @@
     </div>
 }
 
-<div class="col-md-12">
+<div class="col-md-10">
     @foreach (var voyage in Model)
     {   
             if ((voyage.User != null && voyage.User.UserName == User.Identity.Name || voyage.Participants.Contains(ViewBag.ActiveUser)) || voyage.IsPublic)
             {
                 <div class="col-md-4">
-                    <div class="thumbnail">
+                    <div class="thumbnail" style="background-color:@voyage.Color;">
                         <a href="@Url.Action("Details", "Voyages", new { id = voyage.Id })">
                             <img style="height:300px; width:300px; padding:10px;" src="@Html.DisplayFor(modelItem => voyage.Image)" alt="Image @Html.DisplayFor(modelItem => voyage.Name)">
                         </a>
@@ -32,6 +32,13 @@
                 </div>
             }      
     }
+</div>
+
+<div class="col-md-2">
+    <b>Légende</b>
+    <p>Bleu = Propriétaire</p>
+    <p>Rouge = Participant</p>
+    <p>Vert = Public</p>
 </div>
 
 

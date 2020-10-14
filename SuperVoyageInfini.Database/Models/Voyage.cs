@@ -15,6 +15,7 @@ namespace SuperVoyageInfini.Database.Models
         public bool IsPublic { get; set; }
         public bool IsPending { get; set; }
         public string Image { get; set; }
+        public string Color { get; set; }
 
         public virtual ApplicationUser User { get; set; }
         public virtual List<ApplicationUser> Participants { get; set; } = new List<ApplicationUser>();
