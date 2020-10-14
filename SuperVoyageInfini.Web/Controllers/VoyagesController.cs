@@ -24,7 +24,7 @@ namespace SuperVoyageInfini.Web.Controllers
             {
                 if (v.IsPublic)
                 {
-                    v.Color = "green";
+                    v.Color = "yellowgreen";
                 }
                 else if (User.Identity.IsAuthenticated)
                 {
@@ -35,7 +35,7 @@ namespace SuperVoyageInfini.Web.Controllers
 
                     if (v.Participants.Contains(activeUser))
                     {
-                        v.Color = "red";
+                        v.Color = "indianred";
                     }
                     else if(v.User == activeUser)
                     {
