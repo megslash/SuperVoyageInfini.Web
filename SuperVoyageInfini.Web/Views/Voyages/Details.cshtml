@@ -3,11 +3,38 @@
 @{
     ViewBag.Title = AppResource.Details;
 }
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script type="text/javascript">
+    function OnBeginRequest() {
+        alert('On Begin');
+    }
+
+    function OnCompleteRequest() {
+        alert('On Completed');
+    }
+
+    function OnSuccessRequest() {
+        alert('On Success');
+    }
+
+    function OnFailureRequest() {
+        alert('On Failure');
+    }
+</script>
+
+@{
+    AjaxOptions options = new AjaxOptions();
+    options.HttpMethod = "POST";
+    options.UpdateTargetId = "lstParticipant";
+}
 
 <div class="row">
     <div class="col-md-12">
         <div class="thumbnail">
-            <img style="padding:30px;" src="@Html.DisplayFor(model => model.Image)" alt="Image @Html.DisplayFor(model => model.Name)"/>          
+            <img style="padding:30px;" src="@Html.DisplayFor(model => model.Image)" alt="Image @Html.DisplayFor(model => model.Name)" />
             <div class="caption">
                 <h3>@Html.DisplayFor(model => model.Name)</h3>
                 <p>@Html.DisplayFor(model => model.Description)</p>
@@ -25,7 +52,7 @@
                 }
             </div>
         </div>
-    </div> 
+    </div>
 </div>
 
 <div class="row">
@@ -35,7 +62,8 @@
     {
         <div class="col-md-12">
             <div style="padding-top:10px; padding-bottom:30px;" class="input-group">
-                @using (Html.BeginForm("AddParticipant", "Voyages", FormMethod.Post))
+                <!--Ajouter un participant-->
+                @using (Ajax.BeginForm("AddParticipant", "Voyages", options))
                 {
                     @Html.HiddenFor(model => model.Id);
                     <input type="email" class="form-control" placeholder="@AppResource.Email" name="userInfo">
@@ -50,18 +78,18 @@
     <div class="col-md-3">
         @foreach (var participant in Model.Participants)
         {
-        <div class="thumbnail" style="padding:20px;">
-            @using (Html.BeginForm("RemoveParticipant", "Voyages", new { userInfo = participant.Email }, FormMethod.Post))
-            {
-                @Html.DisplayFor(modelItem => participant.Email)
-                @Html.HiddenFor(model => model.Id)
-                <!--Si le ActiveUser est le propriétaire, on affiche le bouton supprimer-->
-                if (ViewBag.ActiveUser == Model.User)
+            <div id="lstParticipant" class="thumbnail" style="padding:20px;">
+                @using (Ajax.BeginForm("RemoveParticipant", "Voyages", new { userInfo = participant.Email }, options))
                 {
-                    <button style="float:right" ; class="btn btn-primary">@SuperVoyageInfini.Resources.AppResource.Delete</button>
+                    @Html.DisplayFor(modelItem => participant.Email)
+                    @Html.HiddenFor(model => model.Id)
+                    <!--Si le ActiveUser est le propriétaire, on affiche le bouton supprimer-->
+                    if (ViewBag.ActiveUser == Model.User)
+                    {
+                        <button style="float:right" ; class="btn btn-primary">@SuperVoyageInfini.Resources.AppResource.Delete</button>
+                    }
                 }
-            }
-        </div>
+            </div>
         }
     </div>
 </div>

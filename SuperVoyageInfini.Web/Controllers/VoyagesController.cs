@@ -17,9 +17,7 @@ namespace SuperVoyageInfini.Web.Controllers
 
         public ActionResult Index()
         {
-            //Si un User est connecté, récuper le user dans un ViewBag
-            
-
+            //Si un User est connecté, récuper le user dans un ViewBag         
             foreach (Voyage v in db.Voyages.ToList())
             {
                 if (v.IsPublic)
@@ -233,9 +231,12 @@ namespace SuperVoyageInfini.Web.Controllers
             if (!voyage.Participants.Contains(participant))
             {
                 voyage.Participants.Add(participant);
-                db.SaveChanges();
+                if (Request.IsAjaxRequest())
+                {
+                    db.SaveChanges();
+                }
             }
-
+            
             return RedirectToAction("Details", "Voyages", new { id = Id });
         }
 
@@ -251,8 +252,11 @@ namespace SuperVoyageInfini.Web.Controllers
             //On vérifie si le participant est déjà dans la liste des participants du voyage pour ne pas avoir de doublon
             if (voyage.Participants.Contains(participant))
             {
-                voyage.Participants.Remove(participant);
-                db.SaveChanges();
+                if (Request.IsAjaxRequest())
+                {
+                    voyage.Participants.Remove(participant);
+                    db.SaveChanges();
+                }     
             }
 
             return RedirectToAction("Details", "Voyages", new { id = Id });
