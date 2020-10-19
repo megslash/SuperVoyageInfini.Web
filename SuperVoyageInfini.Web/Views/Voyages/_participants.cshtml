@@ -1,0 +1,26 @@
+﻿@model SuperVoyageInfini.Database.Models.Voyage
+
+<div class="col-md-3">
+    @foreach (var participant in Model.Participants)
+    {
+    <div class="thumbnail" style="padding:20px;">
+        @{
+            AjaxOptions optionsRemove = new AjaxOptions();
+            optionsRemove.HttpMethod = "POST";
+            optionsRemove.UpdateTargetId = "participants";
+        }
+        @using (Ajax.BeginForm("RemoveParticipant", "Voyages", new { email = participant.Email }, optionsRemove))
+        {
+            <div id="participants">
+            @Html.DisplayFor(modelItem => participant.Email)
+            @Html.HiddenFor(model => model.Id)
+            <!--Si le ActiveUser est le propriétaire, on affiche le bouton supprimer-->
+            @if (ViewBag.ActiveUser == Model.User)
+            {
+            <button style="float:right" ; class="btn btn-primary">@AppResource.Delete</button>
+            }
+            </div>
+        }
+    </div>
+    }
+</div>

@@ -104,7 +104,8 @@ namespace SuperVoyageInfini.Web.Controllers
             {
                 return HttpNotFound();
             }
-            return View(voyage);
+
+            return PartialView("_edit", voyage);
         }
 
         [HttpPost]
@@ -219,47 +220,38 @@ namespace SuperVoyageInfini.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddParticipant(string userInfo, int? Id)
+        public ActionResult AddParticipant(string email, int? Id)
         {
-            UserStore<ApplicationUser> userStore = new UserStore<ApplicationUser>(db);
-            UserManager<ApplicationUser> userManager = new UserManager<ApplicationUser>(userStore);
-
-            ApplicationUser participant = userManager.FindByEmail(userInfo);
-            Voyage voyage = db.Voyages.Find(Id);
+            Voyage voyage = db.Voyages.Single(v => v.Id == Id);
+            ApplicationUser participant = db.Users.Single(u => u.Email == email);
 
             //On vérifie si le participant est déjà dans la liste des participants du voyage pour ne pas avoir de doublon
             if (!voyage.Participants.Contains(participant))
             {
-                voyage.Participants.Add(participant);
-                if (Request.IsAjaxRequest())
-                {
-                    db.SaveChanges();
-                }
+                voyage.Participants.Add(participant);             
+                db.SaveChanges();              
             }
-            
-            return RedirectToAction("Details", "Voyages", new { id = Id });
+            ApplicationUser activeUser = db.Users.Single(u => u.UserName == User.Identity.Name);
+            ViewBag.ActiveUser = activeUser;
+
+            return PartialView("_participants", voyage);
         }
 
         [HttpPost]
-        public ActionResult RemoveParticipant(string userInfo, int? Id)
+        public ActionResult RemoveParticipant(string email, int? Id)
         {
-            UserStore<ApplicationUser> userStore = new UserStore<ApplicationUser>(db);
-            UserManager<ApplicationUser> userManager = new UserManager<ApplicationUser>(userStore);
-
-            ApplicationUser participant = userManager.FindByEmail(userInfo);
-            Voyage voyage = db.Voyages.Find(Id);
+            Voyage voyage = db.Voyages.Single(v => v.Id == Id);
+            ApplicationUser participant = db.Users.Single(u => u.Email == email);
 
             //On vérifie si le participant est déjà dans la liste des participants du voyage pour ne pas avoir de doublon
             if (voyage.Participants.Contains(participant))
-            {
-                if (Request.IsAjaxRequest())
-                {
+            {                   
                     voyage.Participants.Remove(participant);
-                    db.SaveChanges();
-                }     
+                    db.SaveChanges();                  
             }
-
-            return RedirectToAction("Details", "Voyages", new { id = Id });
+            ApplicationUser activeUser = db.Users.Single(u => u.UserName == User.Identity.Name);
+            ViewBag.ActiveUser = activeUser;
+            return PartialView("_participants", voyage);
         }    
     }
 }

@@ -343,6 +343,8 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Voyages\Admin.cshtml" />
+    <Content Include="Views\Voyages\_edit.cshtml" />
+    <Content Include="Views\Voyages\_participants.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

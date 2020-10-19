@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -16,7 +17,11 @@ namespace SuperVoyageInfini.Database.Models
             return userIdentity;
         }
 
+
         public virtual List<Voyage> Voyages { get; set; }
+
+        [InverseProperty("Participants")]
+        public List<Voyage> VoyagesParticipant{ get; set; }
     }
 
 

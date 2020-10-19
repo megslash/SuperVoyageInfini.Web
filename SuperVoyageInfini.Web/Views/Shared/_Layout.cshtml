@@ -7,7 +7,7 @@
     <title>@ViewBag.Title</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-    @Scripts.Render("~/bundles/bootstrap")
+    
 
 </head>
 <body>
@@ -31,27 +31,23 @@
                 </ul>
                 @Html.Partial("_LoginPartial")
 
-            <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        @System.Globalization.CultureInfo.CurrentUICulture.DisplayName
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li>@Html.ActionLink(AppResource.French, "ChangeLanguage", "Base",  new { id = "fr" }, null)</li>
-                        <li>@Html.ActionLink(AppResource.English, "ChangeLanguage", "Base", new { id = "en" }, null)</li>
-                    </ul>
-                </li>       
-            </ul>    
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            @System.Globalization.CultureInfo.CurrentUICulture.DisplayName
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink(AppResource.French, "ChangeLanguage", "Base", new { id = "fr" }, null)</li>
+                            <li>@Html.ActionLink(AppResource.English, "ChangeLanguage", "Base", new { id = "en" }, null)</li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
     <div class="container body-content">
         @RenderBody()
-        <hr />
-        <footer class="col-md-12">
-            <p>&copy; @DateTime.Now.Year - @SuperVoyageInfini.Resources.AppResource.AppName</p>
-        </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")

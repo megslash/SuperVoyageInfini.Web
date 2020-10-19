@@ -1,6 +1,7 @@
 ﻿using SuperVoyageInfini.Resources;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SuperVoyageInfini.Database.Models
 {
@@ -18,6 +19,8 @@ namespace SuperVoyageInfini.Database.Models
         public string Color { get; set; }
 
         public virtual ApplicationUser User { get; set; }
+
+        [InverseProperty("VoyagesParticipant")]
         public virtual List<ApplicationUser> Participants { get; set; } = new List<ApplicationUser>();
     }
 }
