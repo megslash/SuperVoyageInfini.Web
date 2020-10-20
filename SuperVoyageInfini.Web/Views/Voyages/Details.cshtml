@@ -1,41 +1,18 @@
 ﻿@model SuperVoyageInfini.Database.Models.Voyage
 
-@{
-    ViewBag.Title = AppResource.Details;
-}
+@{ ViewBag.Title = AppResource.Details; }
 
 @section Scripts{
 <script src="~/Scripts/jquery.validate.min.js"></script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
 }
-@{
-    AjaxOptions options = new AjaxOptions();
-    options.HttpMethod = "POST";
-    options.UpdateTargetId = "divResponse";
-}
+
     <div class="row">
         <div class="col-md-12">
-            <div class="thumbnail">
-                <img style="padding:30px;" src="@Html.DisplayFor(model => model.Image)" alt="Image @Html.DisplayFor(model => model.Name)" />
-                <div class="caption">
-                    <h3>@Html.DisplayFor(model => model.Name)</h3>
-                    <p>@Html.DisplayFor(model => model.Description)</p>
-                    <!--Si le ActiveUser est le propriétaire OU qu'il fait partie des participants du voyage-->
-                    @if (User.Identity.IsAuthenticated && ViewBag.ActiveUser == Model.User || Model.Participants.Contains(ViewBag.ActiveUser))
-                    {
-                        @Ajax.ActionLink(AppResource.Edit, "Edit", "Voyages", new { id = Model.Id }, options);
-                        //<a href="@Url.Action("Edit", "Voyages", new { id = Model.Id })" class="btn btn-primary" role="button">@AppResource.Edit</a>
-                    }
-                </div>
-                <div class="caption">
-                    <!--Si le ActiveUser est le propriétaire du voyage ET que le voyage n'est pas publique ET que le voyage n'est pas en attente-->
-                    @if (ViewBag.ActiveUser == Model.User && !Model.IsPublic && !Model.IsPending)
-                    {
-                        <a href="@Url.Action("Publish", "Voyages", new { Id = Model.Id })" class="btn btn-primary" role="button">@AppResource.Publish</a>
-                    }
-                </div>
-            </div>
+            <div class="thumbnail">              
+                @Html.Partial("_details", Model)
+            </div>          
         </div>
     </div>
 
@@ -46,19 +23,21 @@
         {
             <div class="col-md-12">
                 <div style="padding-top:10px; padding-bottom:30px;" class="input-group">
-                    <!--Ajouter un participant-->
-                    @{
-                        AjaxOptions optionsAdd = new AjaxOptions();
-                        optionsAdd.HttpMethod = "POST";
-                        optionsAdd.UpdateTargetId = "participants";
-                    }
-                    @using (Ajax.BeginForm("AddParticipant", "Voyages", optionsAdd))
-                    {
-                        @Html.HiddenFor(model => model.Id);
-                        <input type="email" class="form-control" placeholder="@AppResource.Email" name="email">
-                        <button style="margin-top:20px;" class="btn btn-primary">@AppResource.AddParticipant</button>
-                    }
-                </div>
+                <!--Ajouter un participant-->
+                @{
+                    AjaxOptions optionsAdd = new AjaxOptions();
+                    optionsAdd.HttpMethod = "POST";
+                    optionsAdd.UpdateTargetId = "participants";
+
+                }
+
+                @using (Ajax.BeginForm("AddParticipant", "Voyages", optionsAdd))
+                {
+                    @Html.HiddenFor(model => model.Id);
+                    <input type="email" class="form-control" placeholder="@AppResource.Email" name="email">
+                    <button style="margin-top:20px;" class="btn btn-primary">@AppResource.AddParticipant</button>
+                }
+            </div>
             </div>
         }
     </div>

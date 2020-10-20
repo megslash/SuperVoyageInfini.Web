@@ -6,7 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SuperVoyageInfini.Database.Models
 {
     public class Voyage
-    {
+    {   
+        [Key]
         public int Id { get; set; }
         [Required]
         [Display(Name = "Name", ResourceType = typeof(AppResource))]

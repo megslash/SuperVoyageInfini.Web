@@ -21,7 +21,7 @@ namespace SuperVoyageInfini.Database.Models
         public virtual List<Voyage> Voyages { get; set; }
 
         [InverseProperty("Participants")]
-        public List<Voyage> VoyagesParticipant{ get; set; }
+        public virtual List<Voyage> VoyagesParticipant{ get; set; }
     }
 
 

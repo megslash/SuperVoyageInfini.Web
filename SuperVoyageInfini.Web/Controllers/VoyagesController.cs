@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using SuperVoyageInfini.Database.Models;
+using SuperVoyageInfini.Web.Attribute;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -13,7 +14,6 @@ namespace SuperVoyageInfini.Web.Controllers
     public class VoyagesController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-
 
         public ActionResult Index()
         {
@@ -93,32 +93,32 @@ namespace SuperVoyageInfini.Web.Controllers
             return View(voyage);
         }
 
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int? Id)
         {
-            if (id == null)
+            if (Id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Voyage voyage = db.Voyages.Find(id);
+            Voyage voyage = db.Voyages.Find(Id);
             if (voyage == null)
             {
                 return HttpNotFound();
             }
 
-            return PartialView("_edit", voyage);
+            return PartialView("_details", voyage);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Description")] Voyage voyage)
+        public ActionResult Edit([Bind(Include = "Id,Name,Image,Description")] Voyage voyage)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(voyage).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return PartialView("_details", voyage);
             }
-            return View(voyage);
+
+            return PartialView("_edit", voyage);
         }
 
         public ActionResult Delete(int? id)
@@ -161,7 +161,7 @@ namespace SuperVoyageInfini.Web.Controllers
             UserManager<ApplicationUser> userManager = new UserManager<ApplicationUser>(userStore);
             List<ApplicationUser> users = db.Users.ToList();
 
-            //On ajoute dans la liste userAdmins les user qui ont le rôle admin
+            //On ajoute dans la liste userAdmins les users qui ont le rôle admin
             List<ApplicationUser> userAdmins = new List<ApplicationUser>();
             foreach (ApplicationUser user in users)
             {
@@ -209,8 +209,9 @@ namespace SuperVoyageInfini.Web.Controllers
             return RedirectToAction("Admin", "Voyages");
         }
 
-        //Quand on clique sur le bouton Publier dans la page de détails d'un voyage, nous allons chercher.
+        //Quand on clique sur le bouton Publier dans la page de détails d'un voyage, nous allons chercher
         //le voyage qu'on veut publier, on change la valeur de IsPending à true et on retourne à la page de détails du voyage.
+        [ValidateTrip]
         public ActionResult Publish(int Id)
         {
             Voyage pendingVoyage = db.Voyages.Find(Id);
@@ -224,16 +225,15 @@ namespace SuperVoyageInfini.Web.Controllers
         {
             Voyage voyage = db.Voyages.Single(v => v.Id == Id);
             ApplicationUser participant = db.Users.Single(u => u.Email == email);
+            ApplicationUser activeUser = db.Users.Single(u => u.UserName == User.Identity.Name);
+            ViewBag.ActiveUser = activeUser;
 
             //On vérifie si le participant est déjà dans la liste des participants du voyage pour ne pas avoir de doublon
             if (!voyage.Participants.Contains(participant))
             {
                 voyage.Participants.Add(participant);             
                 db.SaveChanges();              
-            }
-            ApplicationUser activeUser = db.Users.Single(u => u.UserName == User.Identity.Name);
-            ViewBag.ActiveUser = activeUser;
-
+            }         
             return PartialView("_participants", voyage);
         }
 
@@ -242,15 +242,15 @@ namespace SuperVoyageInfini.Web.Controllers
         {
             Voyage voyage = db.Voyages.Single(v => v.Id == Id);
             ApplicationUser participant = db.Users.Single(u => u.Email == email);
+            ApplicationUser activeUser = db.Users.Single(u => u.UserName == User.Identity.Name);
+            ViewBag.ActiveUser = activeUser;
 
             //On vérifie si le participant est déjà dans la liste des participants du voyage pour ne pas avoir de doublon
             if (voyage.Participants.Contains(participant))
             {                   
                     voyage.Participants.Remove(participant);
                     db.SaveChanges();                  
-            }
-            ApplicationUser activeUser = db.Users.Single(u => u.UserName == User.Identity.Name);
-            ViewBag.ActiveUser = activeUser;
+            }          
             return PartialView("_participants", voyage);
         }    
     }
